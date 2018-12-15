@@ -1,5 +1,6 @@
 import Koa from 'koa';
 import Router from 'koa-router';
+import cors from '@koa/cors';
 import { db } from './db';
 
 const router = new Router();
@@ -25,6 +26,7 @@ router.get('/streams', async ctx => {
 
 const api = new Koa();
 
+api.use(cors({ origin: '*' }));
 api.use(router.routes());
 api.use(router.allowedMethods());
 
