@@ -5,6 +5,15 @@ import { db } from './db';
 const router = new Router();
 
 /*
+ * GET /streams/:stream_name/messages
+ */
+
+router.get('/streams/:stream_name/messages', async ctx => {
+  const stream = `stream.${ctx.params.stream_name}`;
+  ctx.body = await db.get_messages({ stream });
+})
+
+/*
  * GET /streams
  */
 

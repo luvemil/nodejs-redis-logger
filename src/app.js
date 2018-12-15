@@ -11,15 +11,8 @@ const subscriber = redis.createClient();
 subscriber.on('pmessage',async (patt,chan,msg) => {
   console.log(`{ ptn: ${patt}, chan: ${chan}, msg: ${msg} }`);
 
-  try {
-    await db.streams.insert({ name: chan });
-  } catch(err) {
-    if (err.errorType !== 'uniqueViolated') {
-      console.error(err);
-    }
-  }
-
-  await db.messages.insert({timestamp: +(new Date()), stream: chan, msg });
+  await db.add_stream({ name: chan });
+  await db.add_message({timestamp: +(new Date()), stream: chan, msg });
 });
 
 subscriber.psubscribe('stream.*');
