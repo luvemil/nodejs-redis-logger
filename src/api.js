@@ -11,7 +11,12 @@ const router = new Router();
 
 router.get('/streams/:stream_name/messages', async ctx => {
   const stream = `stream.${ctx.params.stream_name}`;
-  ctx.body = await db.get_messages({ stream });
+  const ts_query = ctx.query.fromTs == null ? null : { timestamp: { $gt: +ctx.query.fromTs } };
+  const search_query = {
+    stream,
+    ...ts_query
+  };
+  ctx.body = await db.get_messages(search_query);
 })
 
 /*
