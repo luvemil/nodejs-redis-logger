@@ -20,6 +20,6 @@ subscriber.psubscribe('stream.*');
 const app = new Koa();
 
 app.use(bodyParser());
-app.use(mount('/api/test',api));
+app.use(mount('/',api));
 
 app.listen(3000);
