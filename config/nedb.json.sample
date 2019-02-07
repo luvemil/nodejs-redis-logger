@@ -1,0 +1,10 @@
+{
+  "Backend": {
+    "dbConfig": {
+      "adapter": "nedb"
+    },
+    "app": {
+      "port": 3024
+    }
+  }
+}
