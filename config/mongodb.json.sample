@@ -4,7 +4,7 @@
       "adapter": "mongodb",
       "user": "root",
       "password": "example",
-      "dbname": "default"
+      "dbName": "default"
     },
     "app": {
       "port": 3024
