@@ -20,12 +20,11 @@ const dbMaker = async ( host = 'localhost', port = '27017', user, password, dbNa
 
   try {
     const client = await client_connect();
-    const db = await client.db(dbName);
+    const db = client.db(dbName);
     return { client, dbObj: db, ...setup_db_api(db) };
   } catch(e) {
     console.error(e.stack);
   }
-  client.close();
 }
 
 const setup_db_api = dbObj => {
