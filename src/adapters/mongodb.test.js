@@ -12,19 +12,32 @@ test('hand connection to mongodb', done => {
     expect(err).toBe(null);
     expect(db).toBeDefined();
     expect(db.isConnected).toBeTruthy();
-    db.close()
+    db.close();
     done();
   });
 });
 
 test('adapter connects to mongodb', async () => {
-  const { user, password } = dbConfig;
-  const db = await dbMaker(undefined, undefined, dbConfig.user, dbConfig.password, dbConfig.dbName);
-  expect(db).toBeDefined();
-  expect(db.dbObj).toBeDefined();
-  expect(db.dbObj.isConnected()).toBeTruthy();
-  db.dbObj.close();
+  const { user, password, dbName } = dbConfig;
+  const { client, dbObj } = await dbMaker(undefined, undefined, user, password, dbName);
+  expect(client).toBeDefined();
+  expect(client.isConnected()).toBeTruthy();
+  client.close();
 });
+
+test('create collection', async () => {
+  const { user, password, dbName } = dbConfig;
+  const { client, dbObj } = await dbMaker(undefined, undefined, user, password, dbName);
+  try {
+    const r = await dbObj.collection('test').insertMany([{a:2}, {a:3}]);
+    expect(r.insertedCount).toBe(2);
+  } catch(e) {
+    expect(e).toBeNull();
+    console.error(e.stack);
+  }
+  await client.close();
+  expect(client.isConnected()).toBeFalsy();
+})
 
 // test('adapter contains dbObj', async () => {
 //   expect.assertions(1);

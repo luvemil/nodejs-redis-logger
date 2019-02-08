@@ -10,7 +10,8 @@
     "build-babel": "babel -d ./build ./src -s",
     "build": "npm run clean && npm run build-babel",
     "start-babel": "npm run build && node build/app.js",
-    "test": "jest"
+    "test": "jest",
+    "test-async": "jest --detectOpenHandles"
   },
   "keywords": [],
   "author": "",

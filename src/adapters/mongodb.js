@@ -6,28 +6,30 @@ import { MongoClient } from 'mongodb';
 const dbMaker = async ( host = 'localhost', port = '27017', user, password, dbName = 'default' ) => {
   const auth_part = user ? `${user}:${password}@` : '';
   const auth_post = user ? "?authSource=admin&gssapiServiceName=mongodb" : "";
-  const url = `mongodb://${auth_part}${host}:${port}/${dbName}${auth_post}`;
+  const url = `mongodb://${auth_part}${host}:${port}/${auth_post}`;
 
   const client_connect = () => new Promise(function(resolve, reject) {
-    MongoClient.connect(url,(err,db) => {
+    MongoClient.connect(url,(err,client) => {
       if (err) {
         reject(err);
       } else {
-        resolve(db);
+        resolve(client);
       }
     })
   })
 
   try {
-    const dbObj = await client_connect();
-    return setup_db_api(dbObj);
+    const client = await client_connect();
+    const db = await client.db(dbName);
+    return { client, dbObj: db, ...setup_db_api(db) };
   } catch(e) {
     console.error(e.stack);
   }
+  client.close();
 }
 
 const setup_db_api = dbObj => {
-  const db = { dbObj };
+  const db = {};
   return db;
 }
 
