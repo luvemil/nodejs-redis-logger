@@ -11,6 +11,7 @@ test('hand connection to mongodb', done => {
   MongoClient.connect(url,(err, db) => {
     expect(err).toBe(null);
     expect(db).toBeDefined();
+    expect(db.isConnected).toBeTruthy();
     db.close()
     done();
   });
@@ -21,6 +22,7 @@ test('adapter connects to mongodb', async () => {
   const db = await dbMaker(undefined, undefined, dbConfig.user, dbConfig.password, dbConfig.dbName);
   expect(db).toBeDefined();
   expect(db.dbObj).toBeDefined();
+  expect(db.dbObj.isConnected()).toBeTruthy();
   db.dbObj.close();
 });
 
