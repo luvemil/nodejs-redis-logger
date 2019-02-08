@@ -1,0 +1,13 @@
+{
+  "Backend": {
+    "dbConfig": {
+      "adapter": "mongodb",
+      "user": "root",
+      "password": "example",
+      "dbname": "default"
+    },
+    "app": {
+      "port": 3024
+    }
+  }
+}

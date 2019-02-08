@@ -4,3 +4,4 @@ config/**/*
 
 !db/.gitignore
 !config/*.json.sample
+!config/*.yml.sample
