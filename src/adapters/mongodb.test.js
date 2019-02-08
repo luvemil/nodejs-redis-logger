@@ -18,6 +18,7 @@ test('hand connection to mongodb', done => {
 });
 
 test('adapter connects to mongodb', async () => {
+  expect.assertions(2);
   const { user, password, dbName } = dbConfig;
   const { client, dbObj } = await dbMaker(undefined, undefined, user, password, dbName);
   expect(client).toBeDefined();
@@ -26,6 +27,7 @@ test('adapter connects to mongodb', async () => {
 });
 
 test('add stream', async () => {
+  expect.assertions(1);
   const { user, password, dbName } = dbConfig;
   const { client, dbObj } = await dbMaker(undefined, undefined, user, password, dbName);
   try {
