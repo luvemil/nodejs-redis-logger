@@ -25,6 +25,21 @@ test('adapter connects to mongodb', async () => {
   client.close();
 });
 
+test('add stream', async () => {
+  const { user, password, dbName } = dbConfig;
+  const { client, dbObj } = await dbMaker(undefined, undefined, user, password, dbName);
+  try {
+    const r = await dbObj.collection('streams').insertOne({name: 'test'})
+    expect(r.insertedCount).toBe(1);
+  } catch (e) {
+    expect(e.code).toBe(11000);
+    if ( e.code !== 11000 ) {
+      console.error(e);
+    }
+  }
+  client.close();
+});
+
 // test('adapter contains dbObj', async () => {
 //   expect.assertions(1);
 //   const { db } = await dbMaker();
