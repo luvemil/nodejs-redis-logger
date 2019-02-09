@@ -34,7 +34,7 @@ const setup_collections = async (client_connect, dbName) => {
     const client = await client_connect();
     const db = client.db(dbName);
     const streams = await db.createCollection('streams');
-    await streams.createIndex({name: 'text'}, {unique: true}); // FIXME:  Apparently with this definition stream.test and stream.testraw are considere equal
+    await streams.createIndex({name: 1}, {unique: true});
     const messages = await db.createCollection('messages');
     await messages.createIndex({timestamp: 1});
     return client.close();
