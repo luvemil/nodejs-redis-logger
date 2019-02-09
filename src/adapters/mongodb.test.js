@@ -43,7 +43,7 @@ test('add stream', async () => {
 });
 
 test('add messages', async () => {
-  expect.assertions(2);
+  expect.assertions(4);
   const test_messages = [
     {text: 'henlo', price: 22, note: null},
     {text: 'roger', price: 12},
@@ -53,17 +53,24 @@ test('add messages', async () => {
   const json_messages = test_messages.map((row) => JSON.stringify(row));
   const { user, password, dbName } = dbConfig;
   const db = await dbMaker(undefined, undefined, user, password, dbName);
+  const streamName = 'stream.test';
   try {
-    await expect(db.add_stream({ name: 'stream.test'})).resolves.toBeTruthy();
-    await expect(Promise.all(json_messages.map((msg, i) => db.add_message({timestamp: i, stream: 'stream.test', msg}))))
+    await expect(db.add_stream({ name: streamName})).resolves.toBeTruthy();
+    await expect(Promise.all(json_messages.map((msg, i) => db.add_message({timestamp: i, stream: streamName, msg}))))
       .resolves.toBeTruthy();
+    // TODO: add code to verify that the stream and the messages were actually added
+    // First attempt (not working):
+    // const messages = await db.get_messages({ stream: streamName});
+    // expect(length(messages)).toBe(length(test_messages));
+    await expect(db.dbObj.collection('streams').deleteOne({ name: streamName})).resolves.toBeTruthy();
+    await expect(db.dbObj.collection('messages').deleteMany({ stream: streamName})).resolves.toBeTruthy();
   } catch(e) {
     expect(e).toBeNull();
   }
 });
 
 test('add messages in object form', async () => {
-  expect.assertions(2);
+  expect.assertions(4);
   const test_messages = [
     {text: 'henlo', price: 22, note: null, ar: [1,2,3,4]},
     {text: 'roger', price: 12, ar: [0,0,1,0]},
@@ -72,10 +79,13 @@ test('add messages in object form', async () => {
   ];
   const { user, password, dbName } = dbConfig;
   const db = await dbMaker(undefined, undefined, user, password, dbName);
+  const streamName = 'stream.testraw';
   try {
-    await expect(db.add_stream({ name: 'stream.testraw'})).resolves.toBeTruthy();
-    await expect(Promise.all(test_messages.map((msg, i) => db.add_message({timestamp: i, stream: 'stream.testraw', msg}))))
+    await expect(db.add_stream({ name: streamName})).resolves.toBeTruthy();
+    await expect(Promise.all(test_messages.map((msg, i) => db.add_message({timestamp: i, stream: streamName, msg}))))
       .resolves.toBeTruthy();
+    await expect(db.dbObj.collection('streams').deleteOne({ name: streamName})).resolves.toBeTruthy();
+    await expect(db.dbObj.collection('messages').deleteMany({ stream: streamName})).resolves.toBeTruthy();
   } catch(e) {
     expect(e).toBeNull();
   }
