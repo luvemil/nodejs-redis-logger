@@ -28,7 +28,7 @@ const dbMaker = async ( host = 'localhost', port = '27017', user, password, dbNa
   }
 }
 
-// setup collection creates its client and destroys it later
+// setup_collection creates its client and destroys it later
 const setup_collections = async (client_connect, dbName) => {
   try {
     const client = await client_connect();
@@ -43,8 +43,29 @@ const setup_collections = async (client_connect, dbName) => {
   }
 }
 
-const setup_db_api = async (client, dbObj) => {
-  return {};
+const add_to_collection = async (collection, row) => {
+  try {
+    return await collection.insertOne(row);
+  } catch(e) {
+    if ( e.code !== 11000 ) { // error code for unique index violation
+      console.error(e);
+      return false;
+    }
+  }
+  return true; // FIXME: does this line get ever executed?
+}
+
+const get_from_collection = (collection, search) => {
+  return db.find(search);
+}
+
+const setup_db_api = (client, dbObj) => {
+  return {
+    add_stream: row => add_to_collection(dbObj.collection('streams'),row),
+    get_streams: search => get_from_collection(dbObj.collection('streams'),search),
+    add_message: row => add_to_collection(dbObj.collection('messages'),row),
+    get_messages: search => get_from_collection(dbObj.collection('messages'),search)
+  };
 }
 
 export { dbMaker };
