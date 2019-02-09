@@ -62,6 +62,25 @@ test('add messages', async () => {
   }
 });
 
+test('add messages in object form', async () => {
+  expect.assertions(2);
+  const test_messages = [
+    {text: 'henlo', price: 22, note: null, ar: [1,2,3,4]},
+    {text: 'roger', price: 12, ar: [0,0,1,0]},
+    {text: 'cd', price: 1, note: 'buy', ar: [1,0,0,0]},
+    {text: 'henlo', price: 17, note: 'sell', ar: [0,0,0,1]}
+  ];
+  const { user, password, dbName } = dbConfig;
+  const db = await dbMaker(undefined, undefined, user, password, dbName);
+  try {
+    await expect(db.add_stream({ name: 'stream.testraw'})).resolves.toBeTruthy();
+    await expect(Promise.all(test_messages.map((msg, i) => db.add_message({timestamp: i, stream: 'stream.testraw', msg}))))
+      .resolves.toBeTruthy();
+  } catch(e) {
+    expect(e).toBeNull();
+  }
+});
+
 // test('adapter contains dbObj', async () => {
 //   expect.assertions(1);
 //   const { db } = await dbMaker();
