@@ -1,4 +1,3 @@
-import redis from 'redis';
 import Koa from 'koa';
 import mount from 'koa-mount';
 import bodyParser from 'koa-bodyparser';
@@ -6,20 +5,10 @@ import config from 'config';
 
 import { db } from './db';
 import { api } from './api';
+import { setup_subscriber } from './subscriber';
 
 const appConfig = config.get('Backend.app');
-const subscriber = redis.createClient();
-
-subscriber.on('pmessage',async (patt,chan,msg) => {
-  try {
-    await db.add_stream({ name: chan });
-    await db.add_message({timestamp: +(new Date()), stream: chan, msg: JSON.parse(msg) });
-  } catch (e) {
-    console.error(e);
-  }
-});
-
-subscriber.psubscribe('stream.*');
+const subscriber = setup_subscriber(db);
 
 const app = new Koa();
 
