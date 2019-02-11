@@ -56,7 +56,7 @@ const add_to_collection = async (collection, row) => {
 }
 
 const get_from_collection = (collection, search) => {
-  return db.find(search);
+  return collection.find(search).toArray();
 }
 
 const setup_db_api = (client, dbObj) => {
