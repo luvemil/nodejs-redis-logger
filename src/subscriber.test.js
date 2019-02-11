@@ -28,12 +28,14 @@ test('saves messages', async (done) => {
   try {
     const res = await db.get_messages({stream:streamName});
     expect(res.length).toBe(test_messages.length);
-    
+
     // CLEANUP
     await expect(db.dbObj.collection('messages').deleteMany({stream: streamName})).resolves.toBeTruthy();
+    await expect(db.dbObj.collection('streams').deleteOne({name: streamName})).resolves.toBeTruthy();
     done();
   } catch(e) {
     console.error(e.stack);
     expect(e).toBeNull();
+    done();
   }
 });
