@@ -13,7 +13,7 @@ const subscriber = redis.createClient();
 subscriber.on('pmessage',async (patt,chan,msg) => {
   try {
     await db.add_stream({ name: chan });
-    await db.add_message({timestamp: +(new Date()), stream: chan, msg });
+    await db.add_message({timestamp: +(new Date()), stream: chan, msg: JSON.parse(msg) });
   } catch (e) {
     console.error(e);
   }
