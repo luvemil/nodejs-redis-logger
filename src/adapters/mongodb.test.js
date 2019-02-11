@@ -31,7 +31,7 @@ test('add stream', async () => {
   const { user, password, dbName } = dbConfig;
   const { client, dbObj } = await dbMaker(undefined, undefined, user, password, dbName);
   try {
-    const r = await dbObj.collection('streams').insertOne({name: 'test'})
+    const r = await dbObj.collection('streams').insertOne({name: 'stream.test'})
     expect(r.insertedCount).toBe(1);
   } catch (e) {
     expect(e.code).toBe(11000);
@@ -67,6 +67,7 @@ test('add messages', async () => {
   } catch(e) {
     expect(e).toBeNull();
   }
+  return await db.client.close();
 });
 
 test('add messages in object form', async () => {
@@ -89,6 +90,7 @@ test('add messages in object form', async () => {
   } catch(e) {
     expect(e).toBeNull();
   }
+  return await db.client.close();
 });
 
 // test('adapter contains dbObj', async () => {
