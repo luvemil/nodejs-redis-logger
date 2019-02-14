@@ -7,6 +7,7 @@ import { db as dbPromise } from './db';
 import { api } from './api';
 import { setup_subscriber } from './subscriber';
 
+console.log('Starting nodejs-logger');
 const appConfig = config.get('Backend.app');
 let subscriber;
 dbPromise.then(db => {
