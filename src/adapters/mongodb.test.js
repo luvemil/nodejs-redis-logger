@@ -93,6 +93,21 @@ test('add messages in object form', async () => {
   return await db.client.close();
 });
 
+test('retrieve messages with db.get_messages', async () => {
+  expect.assertions(1);
+  const { user, password, dbName } = dbConfig;
+  const db = await dbMaker(undefined, undefined, user, password, dbName);
+  const streamName = 'stream.subscriber.test'; // stream filled somewhere else
+  try {
+    const res = await db.get_messages({stream: streamName})
+    expect(res.length).toBe(4);
+  } catch(e) {
+    console.error(e.stack);
+    expect(e).toBeNull();
+  }
+  return await db.client.close();
+});
+
 // test('adapter contains dbObj', async () => {
 //   expect.assertions(1);
 //   const { db } = await dbMaker();

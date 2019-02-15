@@ -55,8 +55,9 @@ const add_to_collection = async (collection, row) => {
   return true; // FIXME: does this line get ever executed?
 }
 
-const get_from_collection = (collection, search) => {
-  return collection.find(search).toArray();
+const get_from_collection = async (collection, search) => {
+  const res = await collection.find(search);
+  return res.toArray();
 }
 
 const setup_db_api = (client, dbObj) => {
