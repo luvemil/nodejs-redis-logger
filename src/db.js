@@ -11,7 +11,7 @@ switch (dbConfig.adapter) {
     break;
   case 'mongodb':
     console.log("Using mongodb adapter");
-    db = require('./adapters/mongodb.js').dbMaker(undefined, undefined, dbConfig.user, dbConfig.password, dbConfig.dbName); // FIXME: this is a promise
+    db = require('./adapters/mongodb.js').dbMaker(undefined, undefined, dbConfig.user, dbConfig.password, dbConfig.dbName);
     break;
   default:
     console.log("No adapter selected");

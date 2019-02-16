@@ -27,7 +27,7 @@ router.get('/streams/:stream_name/messages', async ctx => {
  */
 
 router.get('/streams', async ctx => {
-  const streams = await db.streams.find({});
+  const streams = await db.get_streams({});
   ctx.body = streams;
 })
 

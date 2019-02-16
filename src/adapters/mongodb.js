@@ -3,7 +3,7 @@ import { MongoClient } from 'mongodb';
 // Instructions on https://docs.mongodb.com/manual/
 // and http://mongodb.github.io/node-mongodb-native/3.1/
 
-const dbMaker = async ( host = 'localhost', port = '27017', user, password, dbName = 'default' ) => {
+const dbMaker = ( host = 'localhost', port = '27017', user, password, dbName = 'default' ) => {
   const auth_part = user ? `${user}:${password}@` : '';
   const auth_post = user ? "?authSource=admin&gssapiServiceName=mongodb" : "";
   const url = `mongodb://${auth_part}${host}:${port}/${auth_post}`;
@@ -19,10 +19,10 @@ const dbMaker = async ( host = 'localhost', port = '27017', user, password, dbNa
   })
 
   try {
-    await setup_collections(client_connect,dbName);
-    const client = await client_connect();
-    const db = client.db(dbName);
-    return { client, dbObj: db, ...setup_db_api(client, db) };
+    const initSetupPromise = setup_collections(client_connect,dbName);
+    const clientPromise = client_connect();
+    const dbPromise = clientPromise.then(client => client.db(dbName));
+    return { client: clientPromise, dbObj: dbPromise, ...setup_db_api(clientPromise, dbPromise) };
   } catch(e) {
     console.error(e.stack);
   }
@@ -43,8 +43,10 @@ const setup_collections = async (client_connect, dbName) => {
   }
 }
 
-const add_to_collection = async (collection, row) => {
+const add_to_collection = async (dbPromise, collectionName, row) => {
   try {
+    const db = await dbPromise;
+    const collection = await db.collection(collectionName);
     return await collection.insertOne(row);
   } catch(e) {
     if ( e.code !== 11000 ) { // error code for unique index violation
@@ -55,17 +57,19 @@ const add_to_collection = async (collection, row) => {
   return true; // FIXME: does this line get ever executed?
 }
 
-const get_from_collection = async (collection, search) => {
+const get_from_collection = async (dbPromise, collectionName, search) => {
+  const db = await dbPromise;
+  const collection = await db.collection(collectionName);
   const res = await collection.find(search);
   return res.toArray();
 }
 
-const setup_db_api = (client, dbObj) => {
+const setup_db_api = (clientPromise, dbPromise) => {
   return {
-    add_stream: row => add_to_collection(dbObj.collection('streams'),row),
-    get_streams: search => get_from_collection(dbObj.collection('streams'),search),
-    add_message: row => add_to_collection(dbObj.collection('messages'),row),
-    get_messages: search => get_from_collection(dbObj.collection('messages'),search)
+    add_stream: row => add_to_collection(dbPromise,'streams',row),
+    get_streams: search => get_from_collection(dbPromise,'streams',search),
+    add_message: row => add_to_collection(dbPromise,'messages',row),
+    get_messages: search => get_from_collection(dbPromise,'messages',search)
   };
 }
 
